@@ -5,11 +5,9 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropou
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import ModelCheckpoint
 
-# Path to your dataset
 train_dir = 'data/train'
 validation_dir = 'data/validation'
 
-# Data preprocessing
 train_datagen = ImageDataGenerator(rescale=1.0/255)
 validation_datagen = ImageDataGenerator(rescale=1.0/255)
 
@@ -27,7 +25,6 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='categorical'
 )
 
-# Model definition using Functional API
 inputs = Input(shape=(150, 150, 3))
 x = Conv2D(100, (3,3), activation='relu')(inputs)
 x = MaxPooling2D(2,2)(x)
@@ -40,14 +37,10 @@ outputs = Dense(2, activation='softmax')(x)
 
 model = Model(inputs=inputs, outputs=outputs)
 
-# Compile model
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Adding checkpoints to save the best model
 checkpoint = ModelCheckpoint('model-{epoch:03d}.keras', monitor='val_loss', verbose=1, save_best_only=True, mode='auto')
 
-
-# Train model
 history = model.fit(
     train_generator,
     epochs=10,
@@ -55,10 +48,8 @@ history = model.fit(
     callbacks=[checkpoint]
 )
 
-# Load best model
 model = load_model('model-010.keras')
 
-# Real-time mask detection
 cap = cv2.VideoCapture(0)
 haarcascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
