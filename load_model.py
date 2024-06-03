@@ -5,10 +5,8 @@ import os
 import cv2
 import numpy as np
 
-# Path to your model file
 model_path = 'model-010.keras'
 
-# Function to create a new model
 def create_model():
     model = Sequential([
         Conv2D(100, (3,3), activation='relu', input_shape=(150, 150, 3)),
@@ -22,7 +20,6 @@ def create_model():
     ])
     return model
 
-# Check if the model already exists
 if os.path.exists(model_path):
     print("Loading the existing model.")
     #model = load_model(model_path)
@@ -32,14 +29,11 @@ else:
     model = create_model()
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
 
-    # Assume train_generator and validation_generator are already defined
     checkpoint = ModelCheckpoint('model-{epoch:03d}.keras', monitor='val_loss', verbose=1, save_best_only=True, mode='auto')
     history = model.fit(train_generator, epochs=10, validation_data=validation_generator, callbacks=[checkpoint])
 
-    # Load the best model after training
     model = load_model('model-010.keras')
 
-# Face detection setup
 haarcascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 cap = cv2.VideoCapture(0)
 rect_size = 4
@@ -48,7 +42,7 @@ GR_dict = {0: (0,0,255), 1: (0,255,0)}
 
 while True:
     rval, im = cap.read()
-    im = cv2.flip(im, 1, 1)  # Flip to act as a mirror
+    im = cv2.flip(im, 1, 1) 
 
     rerect_size = cv2.resize(im, (im.shape[1] // rect_size, im.shape[0] // rect_size))
     faces = haarcascade.detectMultiScale(rerect_size)
@@ -67,7 +61,7 @@ while True:
 
     cv2.imshow('LIVE', im)
     key = cv2.waitKey(10)
-    if key == 27:  # Exit on ESC
+    if key == 27: 
         break
 
 cap.release()
